@@ -24,7 +24,7 @@ export class CreateUserDto {
   confirmPassword: string;
 }
 
-export class loginUserDto {
+export class LoginUserDto {
   @IsNotEmpty()
   @IsEmail()
   email: string;

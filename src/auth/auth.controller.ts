@@ -1,5 +1,9 @@
 import { UserService } from './../user/user.service';
-import { CommonUserDto, CreateUserDto } from 'src/common/user.dto';
+import {
+  CommonUserDto,
+  CreateUserDto,
+  LoginUserDto,
+} from 'src/common/user.dto';
 import { AuthService } from './auth.service';
 import {
   BadRequestException,
@@ -20,7 +24,12 @@ export class AuthController {
   async getLogin() {}
 
   @Post('login')
-  async postLogin() {}
+  async postLogin(
+    @Body(new ValidationPipe()) data: LoginUserDto,
+  ): Promise<any> {
+    const user = this.authService.validateUser(data);
+    return user;
+  }
 
   @Post('logout')
   async postLogout() {}
