@@ -11,8 +11,10 @@ import {
   Controller,
   Get,
   Post,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller()
 export class AuthController {
@@ -23,12 +25,12 @@ export class AuthController {
   @Get('login')
   async getLogin() {}
 
+  @UseGuards(AuthGuard('local'))
   @Post('login')
   async postLogin(
     @Body(new ValidationPipe()) data: LoginUserDto,
   ): Promise<any> {
-    const user = this.authService.validateUser(data);
-    return user;
+    return data;
   }
 
   @Post('logout')
