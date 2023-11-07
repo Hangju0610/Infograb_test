@@ -11,10 +11,12 @@ import {
   Controller,
   Get,
   Post,
+  Res,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { Response } from 'express';
 
 @Controller()
 export class AuthController {
@@ -33,6 +35,7 @@ export class AuthController {
     return await this.authService.login(data.email);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Post('logout')
   async postLogout() {}
 

@@ -14,7 +14,6 @@ export class AuthService {
   async validateUser(data: LoginUserDto) {
     // 이메일이 있는지 확인 진행(없다면 에러 처리)
     const user = await this.userService.findUser(data.email);
-    console.log(user);
 
     // 비밀번호가 일치하는지 확인 진행
     // bcrypt의 compare를 통해 진행하며, 일치할 경우 true, 불일치일 경우 false 반환
