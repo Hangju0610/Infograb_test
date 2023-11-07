@@ -30,7 +30,7 @@ export class AuthController {
   async postLogin(
     @Body(new ValidationPipe()) data: LoginUserDto,
   ): Promise<any> {
-    return data;
+    return await this.authService.login(data.email);
   }
 
   @Post('logout')

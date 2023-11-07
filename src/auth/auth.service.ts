@@ -20,7 +20,7 @@ export class AuthService {
     // bcrypt의 compare를 통해 진행하며, 일치할 경우 true, 불일치일 경우 false 반환
     const comparePassword = await compare(data.password, user.password);
 
-    if (user && comparePassword === true) {
+    if (user && comparePassword == true) {
       console.log(user && comparePassword);
       return user;
     }
@@ -29,5 +29,8 @@ export class AuthService {
 
   async login(userId: string) {
     const payload = { userId };
+    return {
+      accessToken: this.jwtService.sign(payload),
+    };
   }
 }
