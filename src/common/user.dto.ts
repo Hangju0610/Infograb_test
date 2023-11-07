@@ -1,4 +1,4 @@
-import { IsEmail, IsString, IsUUID } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, IsUUID } from 'class-validator';
 
 export class CommonUserDto {
   @IsUUID(4)
@@ -11,20 +11,25 @@ export class CommonUserDto {
   password: string;
 }
 export class CreateUserDto {
+  @IsNotEmpty()
   @IsEmail()
   email: string;
 
+  @IsNotEmpty()
   @IsString()
   password: string;
 
+  @IsNotEmpty()
   @IsString()
   confirmPassword: string;
 }
 
 export class loginUserDto {
+  @IsNotEmpty()
   @IsEmail()
   email: string;
 
+  @IsNotEmpty()
   @IsString()
   password: string;
 }

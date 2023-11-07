@@ -3,6 +3,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { User } from './user/entity/user.entity';
 
 @Module({
   imports: [
@@ -17,8 +18,7 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
           database: configService.get<string>('POSTGRES.DATABASE'),
           username: configService.get<string>('POSTGRES.USERNAME'),
           password: configService.get<string>('POSTGRES.PASSWORD'),
-          autoLoadEntities: true,
-          synchronize: true,
+          entities: [User],
           logging: true,
         };
         return obj;
