@@ -8,7 +8,10 @@ export class UserService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
-  async findUser() {}
+  async findUser(email: string) {
+    const user = this.userRepository.findOneBy({ email });
+    return user;
+  }
 
   async createUser() {}
   // 샤워중
