@@ -19,23 +19,57 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiExtraModels,
+  ApiHeaders,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+  getSchemaPath,
+} from '@nestjs/swagger';
 
+@ApiTags('Auth')
+@ApiExtraModels(CommonUserDto)
 @Controller()
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UserService,
   ) {}
+
+  // GET 로그인 페이지 리턴
+  @ApiOperation({
+    summary: '로그인 페이지 리턴',
+    description: '로그인 화면이 나오는 HTML 페이지 리턴',
+  })
   @Get('login')
   @Render('login.ejs')
   async getLogin() {}
 
-  @UseGuards(JwtAuthGuard)
-  @Get('logout')
-  async getLogout(@Res({ passthrough: true }) res: Response) {
-    return res.render('logout.ejs');
-  }
+  // GET 로그아웃 페이지 리턴
+  // @UseGuards(JwtAuthGuard)
+  // @Get('logout')
+  // async getLogout(@Res({ passthrough: true }) res: Response) {
+  //   return res.render('logout.ejs');
+  // }
 
+  // POST 로그인 요청 API
+  @ApiOperation({
+    summary: '로그인 요청 API',
+    description: '로그인 요청 API이며, 요청 완료시 Header로 토큰 전달',
+  })
+  @ApiResponse({
+    description: '로그인 완료 응답',
+    status: 201,
+    headers: {
+      Authorization: {
+        description: 'Access Token을 의미',
+      },
+    },
+    content: { body: { example: { success: true } } },
+  })
   @UseGuards(AuthGuard('local'))
   @Post('login')
   async postLogin(
@@ -51,10 +85,42 @@ export class AuthController {
       .json({ success: true });
   }
 
+  // Post 로그아웃 요청 API
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: '로그아웃 요청 API',
+    description:
+      'Authorization을 통해 회원 검증을 진행하며, 검증 후 Authorization 헤더 제거 진행',
+  })
+  @ApiHeaders([
+    {
+      name: 'Authorization',
+      description: 'AccessToken을 의미한다.',
+    },
+  ])
+  @ApiCreatedResponse({
+    description: '로그아웃 요청 완료',
+    content: { body: { example: { success: true } } },
+  })
   @UseGuards(JwtAuthGuard)
   @Post('logout')
-  async postLogout(@Res({ passthrough: true }) res: Response) {}
+  async postLogout(@Res({ passthrough: true }) res: Response) {
+    res.removeHeader('Authorization');
+    return { success: true };
+  }
 
+  // POST 회원가입 요청 API
+  @ApiOperation({
+    summary: '회원가입 요청 API',
+    description:
+      '회원가입 요청 API로써, Id는 이메일 형식이어야 하며, 비밀번호는 제한 없음',
+  })
+  @ApiCreatedResponse({
+    schema: {
+      allOf: [{ $ref: getSchemaPath(CommonUserDto) }],
+    },
+    description: '회원가입 완료 시 응답',
+  })
   @Post('signup')
   async postSignup(
     @Body(new ValidationPipe()) data: CreateUserDto,
