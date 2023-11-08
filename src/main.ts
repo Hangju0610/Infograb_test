@@ -12,6 +12,7 @@ async function bootstrap() {
   app.useStaticAssets(join(__dirname, '..', 'src', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'src', 'views'));
   app.setViewEngine('ejs');
+  app.enableCors();
   app.use(cookieParser());
   await app.listen(3000);
 }

@@ -11,6 +11,7 @@ import {
   Controller,
   Get,
   Post,
+  Render,
   Res,
   UseGuards,
   ValidationPipe,
@@ -26,36 +27,33 @@ export class AuthController {
     private readonly userService: UserService,
   ) {}
   @Get('login')
-  async getLogin(@Res({ passthrough: true }) res: Response) {
-    res.render('login.ejs');
-  }
+  @Render('login.ejs')
+  async getLogin() {}
 
   @UseGuards(JwtAuthGuard)
   @Get('logout')
   async getLogout(@Res({ passthrough: true }) res: Response) {
-    res.render('logout.ejs');
+    return res.render('logout.ejs');
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AuthGuard('local'))
   @Post('login')
   async postLogin(
     @Body(new ValidationPipe()) data: LoginUserDto,
-    // passthrough : Express와 같이 res를 통해서 return을 하고 싶은 경우 true로 설정
-    @Res({ passthrough: true }) res: Response,
+    // passthrough : Express와 같이 res를 통해서 return을 하고 싶은 경우 false로 설정
+    @Res({ passthrough: false }) res: Response,
   ): Promise<any> {
     const Token = await this.authService.login(data.email);
     // 로그인 성공 시 header에 Authorization 설정 및
     // redirect으로 /logout HTML로 이동
     res
       .setHeader('Authorization', `Bearer ${Token.accessToken}`)
-      .redirect('logout');
+      .json({ success: true });
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('logout')
-  async postLogout(@Res({ passthrough: true }) res: Response) {
-    res.header('accessToken');
-  }
+  async postLogout(@Res({ passthrough: true }) res: Response) {}
 
   @Post('signup')
   async postSignup(

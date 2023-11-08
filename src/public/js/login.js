@@ -30,7 +30,10 @@ function login() {
     .then((res) => {
       if (res.success) {
         // 성공시 / 경로로 이동
-        location.href = 'localhost:3000/logout';
+        // 리다이렉션 시 새로고침 되기 때문에 header의 정보가 날라간다.
+        // location.href = '/logout';
+        // 로그인 알람으로 일단 변경 진행
+        alert('로그인 성공!');
       } else {
         // 실패시 알람 띄우기
         if (res.err) return alert(res.err);
