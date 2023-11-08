@@ -25,19 +25,26 @@ export class AuthController {
     private readonly userService: UserService,
   ) {}
   @Get('login')
-  async getLogin() {}
+  async getLogin(@Res({ passthrough: true }) res: Response) {
+    res.render('login.ejs');
+  }
 
   @UseGuards(AuthGuard('local'))
   @Post('login')
   async postLogin(
     @Body(new ValidationPipe()) data: LoginUserDto,
+    // passthrough : Express와 같이 res를 통해서 return을 하고 싶은 경우 true로 설정
+    @Res({ passthrough: true }) res: Response,
   ): Promise<any> {
-    return await this.authService.login(data.email);
+    const Token = await this.authService.login(data.email);
+    res.setHeader('Authorization', `Bearer ${Token.accessToken}`);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Post('logout')
-  async postLogout() {}
+  async postLogout(@Res({ passthrough: true }) res: Response) {
+    res.header('accessToken');
+  }
 
   @Post('signup')
   async postSignup(
