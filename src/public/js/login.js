@@ -30,11 +30,11 @@ function login() {
     .then((res) => {
       if (res.success) {
         // 성공시 / 경로로 이동
-        location.href = '/';
+        location.href = 'localhost:3000/logout';
       } else {
         // 실패시 알람 띄우기
         if (res.err) return alert(res.err);
-        alert(res.msg);
+        alert(res.mes);
       }
     })
     .catch((err) => {

@@ -17,6 +17,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller()
 export class AuthController {
@@ -29,7 +30,13 @@ export class AuthController {
     res.render('login.ejs');
   }
 
-  @UseGuards(AuthGuard('local'))
+  @UseGuards(JwtAuthGuard)
+  @Get('logout')
+  async getLogout(@Res({ passthrough: true }) res: Response) {
+    res.render('logout.ejs');
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post('login')
   async postLogin(
     @Body(new ValidationPipe()) data: LoginUserDto,
@@ -37,10 +44,14 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<any> {
     const Token = await this.authService.login(data.email);
-    res.setHeader('Authorization', `Bearer ${Token.accessToken}`);
+    // 로그인 성공 시 header에 Authorization 설정 및
+    // redirect으로 /logout HTML로 이동
+    res
+      .setHeader('Authorization', `Bearer ${Token.accessToken}`)
+      .redirect('logout');
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   @Post('logout')
   async postLogout(@Res({ passthrough: true }) res: Response) {
     res.header('accessToken');
