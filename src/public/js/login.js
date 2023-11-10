@@ -36,7 +36,7 @@ function login() {
         alert('로그인 성공!');
       } else {
         // 실패시 알람 띄우기
-        if (res.message == 'Unauthorized')
+        if (res.error == 'Unauthorized')
           return alert('이메일 혹은 비밀번호를 확인해주세요');
         alert(res.message);
       }
